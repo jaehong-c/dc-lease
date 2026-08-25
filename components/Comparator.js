@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { compareDeals, DEFAULT_ASSUMPTIONS } from "../lib/economics";
+import { buildCsv, downloadCsv } from "../lib/exportCsv";
 import DealCard from "./DealCard";
 import SideBySide from "./SideBySide";
 import Assumptions from "./Assumptions";
 import DataGaps from "./DataGaps";
+import MemoPanel from "./MemoPanel";
 
 export default function Comparator({ library }) {
   const deals = library.deals;
@@ -42,6 +44,13 @@ export default function Comparator({ library }) {
     return compare ? compare.results.find((r) => r.id === id) : null;
   }
 
+  function exportCsv() {
+    if (!compare) return;
+    const csv = buildCsv({ compare, deals });
+    const tag = compare.results.map((r) => deals.find((d) => d.id === r.id)?.developerTicker).filter(Boolean).join("-").toLowerCase();
+    downloadCsv(csv, `dc-lease-${tag || "comparison"}.csv`);
+  }
+
   const results = compare ? compare.results : [];
   const verdicts = compare ? compare.verdicts : {};
 
@@ -61,6 +70,9 @@ export default function Comparator({ library }) {
           </button>
         ))}
         <span style={{ flex: 1 }} />
+        <button className="btn btn-ghost btn-sm" onClick={exportCsv} disabled={!compare}>
+          Export CSV
+        </button>
         <button
           className="btn btn-soft btn-sm"
           onClick={() => {
@@ -100,19 +112,10 @@ export default function Comparator({ library }) {
         <Assumptions value={assumptions} onChange={setAssumptions} />
       </div>
 
-      {/* Data gaps + memo (Phase 7) */}
+      {/* Data gaps + memo */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 20, alignItems: "start" }}>
         <DataGaps results={results} deals={deals} />
-        <section className="card">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <div className="card-title">Investment memo</div>
-              <div className="card-sub">AI interprets the numbers above. It does not score them.</div>
-            </div>
-            <button className="btn btn-primary btn-sm" disabled>Generate memo</button>
-          </div>
-          <div className="skeleton" style={{ height: 120, marginTop: 16 }} />
-        </section>
+        <MemoPanel compare={compare} deals={deals} />
       </div>
     </div>
   );
