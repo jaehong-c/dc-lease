@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const SECTIONS = ["Bottom line", "Pricing and economics", "Counterparty and structure", "Delivery and execution", "What would change the view", "Information to confirm"];
 
 function renderInline(text) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -63,6 +65,51 @@ function MemoBody({ memo }) {
   );
 }
 
+function WritingIndicator() {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setStep((s) => Math.min(s + 1, SECTIONS.length - 1)), 2600);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 24, alignItems: "start" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {SECTIONS.map((s, i) => {
+          const state = i < step ? "done" : i === step ? "active" : "todo";
+          return (
+            <div key={s} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: state === "todo" ? "var(--ink-4)" : "var(--ink)" }}>
+              <span
+                className={state === "active" ? "pulse-dot" : ""}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: state === "todo" ? "var(--fill-2)" : "var(--ink)",
+                  flexShrink: 0,
+                }}
+              />
+              <span style={{ fontWeight: state === "active" ? 600 : 400 }}>{s}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 2 }}>
+        <div className="skeleton" style={{ height: 12, width: "38%" }} />
+        <div className="skeleton" style={{ height: 12 }} />
+        <div className="skeleton" style={{ height: 12, width: "94%" }} />
+        <div className="skeleton" style={{ height: 12, width: "88%" }} />
+        <div className="skeleton" style={{ height: 12, width: "52%" }} />
+        <div style={{ height: 6 }} />
+        <div className="skeleton" style={{ height: 12, width: "44%" }} />
+        <div className="skeleton" style={{ height: 12 }} />
+        <div className="skeleton" style={{ height: 12, width: "76%" }} />
+        <p className="muted" style={{ fontSize: 11.5, marginTop: 6 }}>Interpreting the engine outputs. Usually 15 to 30 seconds.</p>
+      </div>
+    </div>
+  );
+}
+
 export default function MemoPanel({ compare, deals }) {
   const [memo, setMemo] = useState("");
   const [loading, setLoading] = useState(false);
@@ -77,9 +124,7 @@ export default function MemoPanel({ compare, deals }) {
     setError("");
     setMemo("");
     try {
-      const results = compare.results
-        .filter((r) => r.ok)
-        .map(({ cash, ...rest }) => rest);
+      const results = compare.results.filter((r) => r.ok).map(({ cash, ...rest }) => rest);
       const ids = results.map((r) => r.id);
       const payloadDeals = deals.filter((d) => ids.includes(d.id));
       const res = await fetch("/api/memo", {
@@ -141,32 +186,14 @@ export default function MemoPanel({ compare, deals }) {
 
       <div style={{ marginTop: 16 }}>
         {!memo && !loading && !error && (
-          <div
-            style={{
-              border: "1px dashed var(--border-strong)",
-              borderRadius: 12,
-              padding: "28px 20px",
-              textAlign: "center",
-              color: "var(--ink-3)",
-              fontSize: 13,
-            }}
-          >
+          <div style={{ border: "1px dashed var(--border-strong)", borderRadius: 12, padding: "28px 20px", textAlign: "center", color: "var(--ink-3)", fontSize: 13 }}>
             {ready
               ? "Six sections: bottom line, pricing, counterparty, delivery, what would change the view, information to confirm."
               : "Select at least one deal to generate a memo."}
           </div>
         )}
-        {loading && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div className="skeleton" style={{ height: 14, width: "40%" }} />
-            <div className="skeleton" style={{ height: 14 }} />
-            <div className="skeleton" style={{ height: 14, width: "92%" }} />
-            <div className="skeleton" style={{ height: 14, width: "60%" }} />
-          </div>
-        )}
-        {error && (
-          <p style={{ fontSize: 13, color: "var(--tier-3)" }}>{error}</p>
-        )}
+        {loading && <WritingIndicator />}
+        {error && <p style={{ fontSize: 13, color: "var(--tier-3)" }}>{error}</p>}
         {memo && <MemoBody memo={memo} />}
       </div>
 

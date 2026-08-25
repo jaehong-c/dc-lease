@@ -3,6 +3,7 @@
 import { fmtUsd, fmtRate, fmtPct, fmtYears } from "../lib/economics";
 
 const SHADES = ["var(--bar-5)", "var(--bar-3)", "var(--bar-2)"];
+export const NEW_CUSTOM = "__custom_new__";
 
 function BasisChip({ basis }) {
   if (!basis || basis === "stated" || basis === "computed") return null;
@@ -29,16 +30,51 @@ function deliveryLabel(months, quarter) {
 }
 
 function optionLabel(d) {
-  return `${d.developerTicker} / ${d.tenantShort || d.tenant} · ${d.criticalItMw} MW`;
+  return `${d.developerTicker || "Custom"} / ${d.tenantShort || d.tenant || "untitled"} · ${d.criticalItMw ?? "?"} MW`;
 }
 
-export default function DealCard({ index, deal, result, verdict, library, onChange, onClear }) {
+function DealSelect({ value, library, customs, onChange, placeholder }) {
+  return (
+    <select className="field-select" value={value} onChange={(e) => onChange(e.target.value)}>
+      {placeholder && (
+        <option value="" disabled>
+          {placeholder}
+        </option>
+      )}
+      <optgroup label="Library">
+        {library.map((d) => (
+          <option key={d.id} value={d.id}>{optionLabel(d)}</option>
+        ))}
+      </optgroup>
+      <optgroup label="Custom">
+        {customs.map((d) => (
+          <option key={d.id} value={d.id}>{optionLabel(d)}</option>
+        ))}
+        <option value={NEW_CUSTOM}>+ New custom deal</option>
+      </optgroup>
+    </select>
+  );
+}
+
+function Hero({ label, value, sub }) {
+  return (
+    <div>
+      <div className="eyebrow">{label}</div>
+      <div className="num-hero" style={{ fontSize: 30, marginTop: 4 }}>
+        {fmtRate(value)}
+      </div>
+      {sub && <div className="muted mono" style={{ fontSize: 11.5, marginTop: 4 }}>{sub}</div>}
+    </div>
+  );
+}
+
+export default function DealCard({ index, deal, result, verdict, library, customs, onChange, onClear, onCustomize, onEdit }) {
   const shade = SHADES[index] || SHADES[0];
 
   // Empty slot
   if (!deal) {
     return (
-      <section className="card card-hover" style={{ minHeight: 420, display: "flex", flexDirection: "column" }}>
+      <section className="card card-hover" style={{ minHeight: 440, display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span className="eyebrow">Deal {index + 1}</span>
           <span className="chip chip-outline">Empty</span>
@@ -47,19 +83,12 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
           <div className="num-hero" style={{ color: "var(--ink-4)" }}>
             $0<span className="num-hero-unit">/kW/mo</span>
           </div>
-          <p className="muted" style={{ fontSize: 13, maxWidth: 220 }}>
-            Pick a disclosed lease from the library.
+          <p className="muted" style={{ fontSize: 13, maxWidth: 240 }}>
+            Pick a disclosed lease from the library, or enter your own.
           </p>
-          <select className="field-select" style={{ maxWidth: 260 }} value="" onChange={(e) => onChange(e.target.value)}>
-            <option value="" disabled>
-              Select deal
-            </option>
-            {library.map((d) => (
-              <option key={d.id} value={d.id}>
-                {optionLabel(d)}
-              </option>
-            ))}
-          </select>
+          <div style={{ width: "100%", maxWidth: 280 }}>
+            <DealSelect value="" library={library} customs={customs} onChange={onChange} placeholder="Select deal" />
+          </div>
         </div>
       </section>
     );
@@ -67,10 +96,17 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
 
   if (!result || !result.ok) {
     return (
-      <section className="card">
-        <span className="eyebrow">Deal {index + 1}</span>
-        <p className="muted" style={{ marginTop: 12 }}>{result?.reason || "Could not evaluate this deal."}</p>
-        <button className="btn btn-ghost btn-sm" style={{ marginTop: 12 }} onClick={onClear}>Clear</button>
+      <section className="card" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span className="eyebrow">Deal {index + 1}</span>
+          <span className="chip chip-unverified">Incomplete</span>
+        </div>
+        <div style={{ fontSize: 16, fontWeight: 600 }}>{optionLabel(deal)}</div>
+        <p className="muted" style={{ fontSize: 13 }}>{result?.reason || "Could not evaluate this deal."}</p>
+        <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
+          {deal.custom && <button className="btn btn-primary btn-sm" onClick={onEdit}>Edit</button>}
+          <button className="btn btn-ghost btn-sm" onClick={onClear}>Clear</button>
+        </div>
       </section>
     );
   }
@@ -88,16 +124,18 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ width: 10, height: 10, borderRadius: 3, background: shade, display: "inline-block" }} />
           <span className="eyebrow">Deal {index + 1}</span>
+          {deal.custom && <span className="chip chip-outline">Custom</span>}
         </div>
         <span className={verdictCls}>{verdict}</span>
       </div>
 
       <div>
         <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>
-          {deal.developerTicker} <span className="muted" style={{ fontWeight: 400 }}>/</span> {deal.tenantShort || deal.tenant}
+          {deal.developerTicker || "Custom"} <span className="muted" style={{ fontWeight: 400 }}>/</span> {deal.tenantShort || deal.tenant || "untitled"}
         </div>
         <div className="card-sub">
-          {deal.campus}, {deal.state} · announced {deal.announcedDate}
+          {[deal.campus, deal.state].filter(Boolean).join(", ") || "Location not set"}
+          {deal.announcedDate ? ` · announced ${deal.announcedDate}` : ""}
         </div>
       </div>
 
@@ -112,16 +150,10 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
         {result.inputs.nnn ? <span className="chip chip-stated">NNN</span> : <span className="chip chip-unverified">opex assumed</span>}
       </div>
 
-      {/* Hero number */}
-      <div style={{ paddingTop: 4 }}>
-        <div className="num-hero">
-          {fmtRate(o.rateYr1)}
-          <span className="num-hero-unit">/kW/mo · yr 1</span>
-        </div>
-        <div className="muted mono" style={{ fontSize: 12, marginTop: 6 }}>
-          avg over term {fmtRate(o.rateAvg)}
-          {o.rateAvgGross != null ? ` · on gross MW ${fmtRate(o.rateAvgGross)}` : ""}
-        </div>
+      {/* Two hero numbers, equal weight */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, paddingTop: 4 }}>
+        <Hero label="Avg $/kW/mo" value={o.rateAvg} sub={o.rateAvgGross != null ? `on gross MW ${fmtRate(o.rateAvgGross)}` : "over base term"} />
+        <Hero label="Year-1 $/kW/mo" value={o.rateYr1} sub={`${f.escalator === "stated" ? "" : "assumed "}${result.inputs.escalatorPct.toFixed(1)}% escalator`} />
       </div>
 
       {/* Line items */}
@@ -142,13 +174,14 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
 
       {/* Footer controls */}
       <div style={{ display: "flex", gap: 8, marginTop: "auto", paddingTop: 4 }}>
-        <select className="field-select" value={deal.id} onChange={(e) => onChange(e.target.value)}>
-          {library.map((d) => (
-            <option key={d.id} value={d.id}>
-              {optionLabel(d)}
-            </option>
-          ))}
-        </select>
+        <DealSelect value={deal.id} library={library} customs={customs} onChange={onChange} />
+        {deal.custom ? (
+          <button className="btn btn-primary btn-sm" onClick={onEdit}>Edit</button>
+        ) : (
+          <button className="btn btn-ghost btn-sm" onClick={onCustomize} title="Copy into a custom deal and edit the numbers">
+            Customize
+          </button>
+        )}
         <button className="btn btn-ghost btn-sm" onClick={onClear} title="Clear slot">
           Clear
         </button>

@@ -5,6 +5,7 @@ import { fmtUsd, fmtRate, fmtPct, WEIGHTS } from "../lib/economics";
 const SHADES = ["var(--bar-5)", "var(--bar-3)", "var(--bar-2)"];
 
 const METRICS = [
+  { key: "rateAvg", label: "Rate, avg over term ($/kW/mo)", fmt: fmtRate },
   { key: "rateYr1", label: "Rate, yr 1 ($/kW/mo)", fmt: fmtRate },
   { key: "yieldOnCost", label: "Yield on cost", fmt: (v) => fmtPct(v) },
   { key: "projectIrr", label: "Unlevered IRR", fmt: (v) => fmtPct(v) },
@@ -20,7 +21,7 @@ const AXES = [
 ];
 
 function shortName(deal) {
-  return `${deal.developerTicker} / ${deal.tenantShort || deal.tenant}`;
+  return `${deal.developerTicker || "Custom"} / ${deal.tenantShort || deal.tenant || "untitled"}`;
 }
 
 function BarRow({ label, items, max, fmt }) {
