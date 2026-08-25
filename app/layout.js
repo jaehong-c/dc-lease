@@ -41,6 +41,8 @@ function Header() {
         <nav style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <Link href="/" className="btn btn-soft btn-sm">Compare</Link>
           <Link href="/about" className="btn btn-ghost btn-sm">About</Link>
+          <span style={{ width: 1, height: 20, background: "var(--border-strong)", margin: "0 4px" }} />
+          <a href="https://dc-screener.vercel.app" target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">Site Screener</a>
           <a href="https://dc-risk.vercel.app" target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">Risk Register</a>
         </nav>
       </div>

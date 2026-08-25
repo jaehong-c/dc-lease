@@ -4,6 +4,7 @@ const SHADES = ["var(--bar-5)", "var(--bar-3)", "var(--bar-2)"];
 
 const FIELD_LABEL = {
   criticalItMw: "Critical IT MW",
+  termYears: "Term",
   escalatorPct: "Escalator",
   annualRentYr1: "Year-1 rent",
   tcv: "Contract value",
@@ -33,6 +34,12 @@ function chipClass(basis) {
   return "chip chip-unverified";
 }
 
+function dealName(d) {
+  const t = d.developerTicker || (d.custom ? "Custom" : "");
+  const n = d.tenantShort || d.tenant || (d.custom ? "untitled" : "");
+  return `${t} / ${n}`;
+}
+
 export default function DataGaps({ results, deals }) {
   const rows = results
     .map((r, i) => ({ r, deal: deals.find((d) => d.id === r.id), shade: SHADES[i] || SHADES[0] }))
@@ -57,9 +64,7 @@ export default function DataGaps({ results, deals }) {
           <div key={x.r.id}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
               <span style={{ width: 8, height: 8, borderRadius: 2, background: x.shade, display: "inline-block" }} />
-              <span style={{ fontSize: 13, fontWeight: 600 }}>
-                {x.deal.developerTicker} / {x.deal.tenantShort || x.deal.tenant}
-              </span>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>{dealName(x.deal)}</span>
             </div>
             {(!x.r.gaps || x.r.gaps.length === 0) && (
               <p className="muted" style={{ fontSize: 12.5, paddingLeft: 16 }}>All inputs stated.</p>
