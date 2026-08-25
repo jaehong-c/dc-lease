@@ -6,8 +6,7 @@ const SHADES = ["var(--bar-5)", "var(--bar-3)", "var(--bar-2)"];
 
 function BasisChip({ basis }) {
   if (!basis || basis === "stated" || basis === "computed") return null;
-  const cls =
-    basis === "derived" ? "chip chip-derived" : basis === "assumed" ? "chip chip-unverified" : "chip chip-unverified";
+  const cls = basis === "derived" ? "chip chip-derived" : "chip chip-unverified";
   return <span className={cls}>{basis}</span>;
 }
 
@@ -27,6 +26,10 @@ function deliveryLabel(months, quarter) {
   if (quarter == null) return "n/a";
   if (months != null && months <= 0) return "In service";
   return quarter;
+}
+
+function optionLabel(d) {
+  return `${d.developerTicker} / ${d.tenantShort || d.tenant} · ${d.criticalItMw} MW`;
 }
 
 export default function DealCard({ index, deal, result, verdict, library, onChange, onClear }) {
@@ -53,7 +56,7 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
             </option>
             {library.map((d) => (
               <option key={d.id} value={d.id}>
-                {d.developerTicker} / {d.tenant} · {d.criticalItMw} MW
+                {optionLabel(d)}
               </option>
             ))}
           </select>
@@ -91,7 +94,7 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
 
       <div>
         <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>
-          {deal.developerTicker} <span className="muted" style={{ fontWeight: 400 }}>/</span> {deal.tenant}
+          {deal.developerTicker} <span className="muted" style={{ fontWeight: 400 }}>/</span> {deal.tenantShort || deal.tenant}
         </div>
         <div className="card-sub">
           {deal.campus}, {deal.state} · announced {deal.announcedDate}
@@ -142,7 +145,7 @@ export default function DealCard({ index, deal, result, verdict, library, onChan
         <select className="field-select" value={deal.id} onChange={(e) => onChange(e.target.value)}>
           {library.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.developerTicker} / {d.tenant} · {d.criticalItMw} MW
+              {optionLabel(d)}
             </option>
           ))}
         </select>

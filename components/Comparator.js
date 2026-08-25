@@ -3,6 +3,9 @@
 import { useMemo, useState } from "react";
 import { compareDeals, DEFAULT_ASSUMPTIONS } from "../lib/economics";
 import DealCard from "./DealCard";
+import SideBySide from "./SideBySide";
+import Assumptions from "./Assumptions";
+import DataGaps from "./DataGaps";
 
 export default function Comparator({ library }) {
   const deals = library.deals;
@@ -38,6 +41,9 @@ export default function Comparator({ library }) {
   function resultFor(id) {
     return compare ? compare.results.find((r) => r.id === id) : null;
   }
+
+  const results = compare ? compare.results : [];
+  const verdicts = compare ? compare.verdicts : {};
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -80,7 +86,7 @@ export default function Comparator({ library }) {
             index={i}
             deal={deal}
             result={deal ? resultFor(deal.id) : null}
-            verdict={deal && compare ? compare.verdicts[deal.id] : null}
+            verdict={deal && compare ? verdicts[deal.id] : null}
             library={deals}
             onChange={(id) => setSlot(i, id)}
             onClear={() => setSlot(i, null)}
@@ -88,27 +94,15 @@ export default function Comparator({ library }) {
         ))}
       </div>
 
-      {/* Comparison + assumptions (Phase 6) */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20 }}>
-        <section className="card">
-          <div className="card-title">Side-by-side</div>
-          <div className="card-sub">Rate, yield on cost, and scorecard across selected deals</div>
-          <div className="skeleton" style={{ height: 180, marginTop: 16 }} />
-        </section>
-        <section className="card">
-          <div className="card-title">Assumptions</div>
-          <div className="card-sub">Rent assumes NNN; power passed through at cost</div>
-          <div className="skeleton" style={{ height: 180, marginTop: 16 }} />
-        </section>
+      {/* Comparison + assumptions */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, alignItems: "start" }}>
+        <SideBySide results={results} deals={deals} verdicts={verdicts} leaders={compare?.leaders} />
+        <Assumptions value={assumptions} onChange={setAssumptions} />
       </div>
 
-      {/* Data gaps + memo (Phase 6, 7) */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 20 }}>
-        <section className="card">
-          <div className="card-title">Data gaps</div>
-          <div className="card-sub">Inputs that are derived, assumed, or unverified</div>
-          <div className="skeleton" style={{ height: 120, marginTop: 16 }} />
-        </section>
+      {/* Data gaps + memo (Phase 7) */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 20, alignItems: "start" }}>
+        <DataGaps results={results} deals={deals} />
         <section className="card">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
