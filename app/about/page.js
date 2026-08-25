@@ -6,6 +6,8 @@ export const metadata = {
   title: "About · DC Lease Comparator",
 };
 
+const REPO_URL = "https://github.com/jaehong-c/dc-lease";
+
 function Section({ title, children }) {
   return (
     <section className="card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -34,6 +36,13 @@ export default function About() {
       <div>
         <div className="eyebrow">About</div>
         <h1 style={{ fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em", marginTop: 6 }}>DC Lease Comparator</h1>
+        <p style={{ fontSize: 14.5, color: "var(--ink-2)", marginTop: 8, lineHeight: 1.6 }}>
+          Built by Jae Chung. Code and data are public on{" "}
+          <a href={REPO_URL} target="_blank" rel="noreferrer" style={{ textDecoration: "underline" }}>
+            GitHub
+          </a>
+          .
+        </p>
         <p style={{ fontSize: 14.5, color: "var(--ink-2)", marginTop: 8, lineHeight: 1.6 }}>
           A side-by-side underwriting tool for publicly disclosed data center leases. Pick two or three deals, or enter
           your own, adjust the assumptions, and read the economics from the developer's side of the table: rate per kW,
