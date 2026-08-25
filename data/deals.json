@@ -1,0 +1,466 @@
+{
+  "meta": {
+    "version": "0.1.0",
+    "lastVerified": "2026-08-24",
+    "scope": "Publicly disclosed data center leases from public-company press releases, 8-K exhibits, and investor materials. The universe skews toward converted-miner developers because hyperscaler-direct leases with private developers are rarely disclosed.",
+    "conventions": {
+      "money": "USD, absolute dollars (not millions)",
+      "mw": "criticalItMw is the billable denominator. grossMw is utility/gross power and is shown for context only.",
+      "null": "null means undisclosed. The engine treats null as unknown, never as zero.",
+      "basis": "Every quantitative field carries a companion basis flag where it matters: stated (from filing or release), derived (computed from other stated values), estimated (Claude/Jae estimate, flagged in UI), unverified (secondary source only).",
+      "dates": "YYYY-MM-DD for events, YYYY-Qn for delivery windows"
+    },
+    "creditTiers": {
+      "1": "Investment-grade hyperscaler, IG parent guarantee, or IG credit support covering the lease",
+      "2": "Well-funded private AI lab or AI cloud without disclosed IG support",
+      "3": "Speculative or thinly capitalized counterparty"
+    }
+  },
+  "deals": [
+    {
+      "id": "wulf-anthropic-justified",
+      "developer": "TeraWulf",
+      "developerTicker": "WULF",
+      "tenant": "Anthropic",
+      "campus": "Justified Data Campus",
+      "city": "Hawesville",
+      "state": "KY",
+      "gridOperator": "MISO",
+      "announcedDate": "2026-07-06",
+      "sourceType": "press release + 8-K exhibit",
+      "sources": [
+        {
+          "label": "TeraWulf press release, 2026-07-06",
+          "url": "https://investors.terawulf.com/news-events/press-releases/detail/142/terawulf-announces-anthropic-lease-at-justified-data-campus-and-sale-of-majority-interest-in-abernathy-joint-venture-to-fluidstack"
+        },
+        {
+          "label": "8-K Exhibit 99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1083301/000110465926080583/tm2619468d1_ex99-1.htm"
+        }
+      ],
+      "criticalItMw": 401,
+      "grossMw": 480,
+      "grossMwBasis": "unverified",
+      "termYears": 20,
+      "tcv": 19000000000,
+      "tcvBasis": "stated",
+      "annualRentYr1": null,
+      "escalatorPct": null,
+      "leaseStructure": "NNN",
+      "leaseStructureBasis": "estimated",
+      "takeOrPay": null,
+      "prepayment": null,
+      "renewalOptions": "Two successive 5-year options (to 30 years total)",
+      "renewalOptionsCount": 2,
+      "renewalOptionYears": 5,
+      "deliveryStart": "2027-Q3",
+      "fullDelivery": "2028-Q1",
+      "rentCommencement": "Phased, as each phase is delivered",
+      "phases": [
+        {
+          "label": "Initial capacity",
+          "window": "2027-Q3"
+        },
+        {
+          "label": "Full 401 MW",
+          "window": "2028-Q1"
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": null,
+      "capexBasis": "unverified",
+      "capexNote": "Press reports point to a roughly $3.5B debt raise to fund the campus; no capex figure disclosed in the release.",
+      "tenantCreditTier": 2,
+      "backstop": {
+        "provider": "Undisclosed investment-grade credit",
+        "scope": "Lease expected to be supported by an investment-grade credit per release",
+        "amount": null
+      },
+      "effectiveCreditTier": 1,
+      "effectiveCreditBasis": "stated",
+      "notes": [
+        "Largest single lease in the comp set by TCV. Rent is phased with delivery, so the $950M average annual figure overstates early-year cash flow.",
+        "Power via a MISO pass-through electric service agreement with no markup on wholesale cost; tenant bears energy and capacity market risk (secondary reporting).",
+        "Site is the retired Century Hawesville aluminum smelter."
+      ]
+    },
+    {
+      "id": "hut-beacon-point-ph2",
+      "developer": "Hut 8",
+      "developerTicker": "HUT",
+      "tenant": "Undisclosed high-investment-grade tenant (same as Phase 1)",
+      "campus": "Beacon Point, Phase 2",
+      "city": "Nueces County",
+      "state": "TX",
+      "gridOperator": "ERCOT",
+      "announcedDate": "2026-07-20",
+      "sourceType": "press release",
+      "sources": [
+        {
+          "label": "Hut 8 press release, 2026-07-20",
+          "url": "https://www.prnewswire.com/news-releases/hut-8-fully-commercializes-1-gw-beacon-point-ai-data-center-campus-with-second-352-mw-it-lease-bringing-campus-level-base-term-contract-value-to-19-6-billion-302829514.html"
+        },
+        {
+          "label": "DCD coverage",
+          "url": "https://www.datacenterdynamics.com/en/news/hut-8-signs-352mw-lease-with-unnamed-hyperscaler-in-texas/"
+        }
+      ],
+      "criticalItMw": 352,
+      "grossMw": 500,
+      "grossMwBasis": "derived",
+      "termYears": 15,
+      "tcv": 9800000000,
+      "tcvBasis": "stated",
+      "annualRentYr1": null,
+      "stabilizedAnnualNoi": 655000000,
+      "stabilizedAnnualNoiBasis": "stated",
+      "escalatorPct": 3.0,
+      "escalatorBasis": "stated",
+      "leaseStructure": "NNN",
+      "leaseStructureBasis": "stated",
+      "takeOrPay": true,
+      "prepayment": null,
+      "renewalOptions": "Three 5-year options",
+      "renewalOptionsCount": 3,
+      "renewalOptionYears": 5,
+      "deliveryStart": "2028-Q2",
+      "fullDelivery": null,
+      "rentCommencement": "Initial Phase 2 data hall delivery expected Q2 2028; campus energization Q1 2027",
+      "phases": [
+        {
+          "label": "Campus energization",
+          "window": "2027-Q1"
+        },
+        {
+          "label": "Initial Phase 2 data hall",
+          "window": "2028-Q2"
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": null,
+      "capexBasis": "unverified",
+      "capexNote": "Phase 1 financed with investment-grade debt per Hut 8; Phase 2 capex not disclosed.",
+      "tenantCreditTier": 1,
+      "backstop": null,
+      "effectiveCreditTier": 1,
+      "effectiveCreditBasis": "stated",
+      "notes": [
+        "Company states cumulative NOI over the base term equals contract value, which implies the tenant bears substantially all operating cost (true NNN).",
+        "Executed on substantially the same terms as the Phase 1 lease (May 2026, 352 MW, $9.8B base term).",
+        "1,000 MW utility interconnection with AEP Texas; grossMw here is half the campus and is a derived allocation, not a disclosed figure."
+      ]
+    },
+    {
+      "id": "cifr-aws-black-pearl",
+      "developer": "Cipher Mining",
+      "developerTicker": "CIFR",
+      "tenant": "Amazon Web Services",
+      "campus": "Black Pearl",
+      "city": "Wink",
+      "state": "TX",
+      "gridOperator": "ERCOT",
+      "announcedDate": "2025-11-03",
+      "sourceType": "press release + 8-K",
+      "sources": [
+        {
+          "label": "Cipher 8-K business update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819989/000181998925000110/ciphermining_businessupd.htm"
+        },
+        {
+          "label": "Cipher Q3 2025 release",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819989/000181998925000110/nov3_earningspressreleasex.htm"
+        }
+      ],
+      "criticalItMw": 216,
+      "criticalItMwBasis": "unverified",
+      "grossMw": 300,
+      "grossMwBasis": "stated",
+      "termYears": 15,
+      "tcv": 5500000000,
+      "tcvBasis": "stated",
+      "annualRentYr1": null,
+      "escalatorPct": null,
+      "leaseStructure": "NNN",
+      "leaseStructureBasis": "unverified",
+      "takeOrPay": null,
+      "prepayment": null,
+      "renewalOptions": null,
+      "renewalOptionsCount": null,
+      "renewalOptionYears": null,
+      "deliveryStart": "2026-Q4",
+      "fullDelivery": "2027-Q1",
+      "rentCommencement": "8-K stated rent commencing Aug 2026; later coverage indicates initial rent Oct 2026 and final phase by Mar 2027",
+      "phases": [
+        {
+          "label": "Phase 1",
+          "window": "2026-Q3"
+        },
+        {
+          "label": "Phase 2",
+          "window": "2026-Q4"
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": null,
+      "capexBasis": "unverified",
+      "capexNote": "Roughly $2.0B of project-level financing reported in place; capex not disclosed.",
+      "tenantCreditTier": 1,
+      "backstop": {
+        "provider": "Amazon.com, Inc.",
+        "scope": "Guarantee of base rent and operating expenses (secondary reporting)",
+        "amount": null
+      },
+      "effectiveCreditTier": 1,
+      "effectiveCreditBasis": "stated",
+      "notes": [
+        "The release is priced on 300 MW of gross capacity, not critical IT. The 216 MW critical IT figure comes from secondary coverage and is flagged unverified. Rate per kW is materially different depending on which denominator is used; the app shows both.",
+        "First direct hyperscaler lease (no integrator) signed by a converted miner, per management.",
+        "Conversion of an energized bitcoin site, which compresses delivery timeline relative to greenfield comps."
+      ]
+    },
+    {
+      "id": "glxy-coreweave-helios",
+      "developer": "Galaxy Digital",
+      "developerTicker": "GLXY",
+      "tenant": "CoreWeave",
+      "campus": "Helios",
+      "city": "Dickens County",
+      "state": "TX",
+      "gridOperator": "ERCOT",
+      "announcedDate": "2025-08-15",
+      "sourceType": "press release + delivery update",
+      "sources": [
+        {
+          "label": "Galaxy press release, 2025-08-15",
+          "url": "https://www.prnewswire.com/news-releases/galaxy-closes-1-4-billion-project-financing-facility-to-accelerate-helios-ai-datacenter-development-302530804.html"
+        },
+        {
+          "label": "Phase I delivery coverage, 2026-07-07",
+          "url": "https://blockspace.media/insight/galaxy-delivers-helios-to-coreweave/"
+        }
+      ],
+      "criticalItMw": 526,
+      "grossMw": 800,
+      "grossMwBasis": "stated",
+      "termYears": 15,
+      "tcv": null,
+      "tcvBasis": "unverified",
+      "annualRentYr1": null,
+      "averageAnnualRevenue": 1000000000,
+      "averageAnnualRevenueBasis": "stated",
+      "averageAnnualRevenueNote": "Company guidance: more than $1B average annual revenue across the 15-year term, assuming full utilization. Revenue, not NOI, and the definition may include reimbursements.",
+      "escalatorPct": null,
+      "leaseStructure": null,
+      "leaseStructureBasis": "unverified",
+      "takeOrPay": null,
+      "prepayment": null,
+      "renewalOptions": "Two 5-year extension options",
+      "renewalOptionsCount": 2,
+      "renewalOptionYears": 5,
+      "deliveryStart": "2026-Q2",
+      "fullDelivery": null,
+      "rentCommencement": "Phase I (133 MW) rent commenced Q2 2026; Phase II data halls from H1 2027; Phase III undisclosed",
+      "phases": [
+        {
+          "label": "Phase I, 133 MW",
+          "window": "2026-Q2"
+        },
+        {
+          "label": "Phase II",
+          "window": "2027-Q1"
+        },
+        {
+          "label": "Phase III",
+          "window": null
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": null,
+      "capexBasis": "estimated",
+      "capexNote": "Phase I: $1.4B project financing described as covering roughly 80% of construction cost, implying about $1.75B for 133 MW (about $13M per critical IT MW). Full-campus capex undisclosed.",
+      "capexPhase1Implied": 1750000000,
+      "capexPhase1ImpliedMw": 133,
+      "tenantCreditTier": 2,
+      "backstop": null,
+      "effectiveCreditTier": 2,
+      "effectiveCreditBasis": "stated",
+      "notes": [
+        "Home deal for the Galaxy application. Phase I delivered on budget and on schedule per company.",
+        "Three separate lease agreements (Apr 2025, Aug 2025 second phase, option exercise) rolled up to 526 MW critical IT on 800 MW gross; treated here as one economic position.",
+        "TCV is left null because the company guides to average annual revenue rather than base-term contract value; the engine derives an indicative TCV from average revenue times term and flags it as derived."
+      ]
+    },
+    {
+      "id": "corz-coreweave-portfolio",
+      "developer": "Core Scientific",
+      "developerTicker": "CORZ",
+      "tenant": "CoreWeave",
+      "campus": "Six-site portfolio (Denton TX, Dalton GA, Muskogee OK, Marble NC, Austin TX)",
+      "city": "Multiple",
+      "state": "TX",
+      "gridOperator": "Multiple (ERCOT, SERC, SPP)",
+      "announcedDate": "2025-02-26",
+      "sourceType": "press release + 8-K investor presentation",
+      "sources": [
+        {
+          "label": "Core Scientific press release, 2025-02-26",
+          "url": "https://investors.corescientific.com/news-events/press-releases/detail/110/core-scientific-and-coreweave-announce-1-2-billion-expansion-at-denton-tx-site"
+        },
+        {
+          "label": "8-K investor presentation, 2025-05-07",
+          "url": "https://investors.corescientific.com/sec-filings/all-sec-filings/content/0001628280-25-023161/0001628280-25-023161.pdf"
+        }
+      ],
+      "criticalItMw": 590,
+      "grossMw": 800,
+      "grossMwBasis": "stated",
+      "termYears": 12,
+      "tcv": 10200000000,
+      "tcvBasis": "stated",
+      "annualRentYr1": null,
+      "averageAnnualRevenue": 850000000,
+      "averageAnnualRevenueBasis": "stated",
+      "escalatorPct": null,
+      "leaseStructure": "Hosting (client pays capex, power, utilities)",
+      "leaseStructureBasis": "stated",
+      "takeOrPay": true,
+      "prepayment": null,
+      "renewalOptions": "Two 5-year options (Austin site is a 7-year term)",
+      "renewalOptionsCount": 2,
+      "renewalOptionYears": 5,
+      "deliveryStart": "2025-Q2",
+      "fullDelivery": "2027-Q1",
+      "rentCommencement": "Rolling by site from 2025 through early 2027",
+      "phases": [
+        {
+          "label": "First 250 MW",
+          "window": "2025-Q4"
+        },
+        {
+          "label": "Full 590 MW",
+          "window": "2027-Q1"
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": 750000000,
+      "tenantFundedCapexBasis": "stated",
+      "tenantFundedCapexNote": "Up to $1.5M per MW (about $750M) funded by CoreWeave and credited against hosting payments at no more than 50% of monthly fees until repaid. Core Scientific separately funds $104M for the Denton 70 MW increment with no credit.",
+      "developerNetCapexKnown": 104000000,
+      "developerNetCapexKnownBasis": "stated",
+      "capexBasis": "stated-partial",
+      "capexNote": "Tenant-funded model. Developer net spend is undisclosed; the only stated figure is $1.5M per MW for the Denton 70 MW increment. Because total developer capex is unknown, the global capex assumption applies and yield on cost is likely understated for this deal.",
+      "tenantCreditTier": 2,
+      "backstop": null,
+      "effectiveCreditTier": 2,
+      "effectiveCreditBasis": "stated",
+      "notes": [
+        "Cleanest public example of tenant-funded capex repaid through rent credits. Headline $/kW/month is not comparable to NNN leases without adjusting for the credit.",
+        "Company guided to 75% to 80% margin, so revenue is well above NOI; the engine applies the opex assumption slider here unless NOI is entered.",
+        "CoreWeave announced an agreement to acquire Core Scientific in May 2026 (a prior 2025 attempt did not close). If completed, the tenant becomes the owner and this lease converts from third-party rent to internal cost."
+      ]
+    },
+    {
+      "id": "cifr-fluidstack-barber-lake",
+      "developer": "Cipher Mining",
+      "developerTicker": "CIFR",
+      "tenant": "Fluidstack",
+      "campus": "Barber Lake",
+      "city": "Colorado City",
+      "state": "TX",
+      "gridOperator": "ERCOT",
+      "announcedDate": "2025-09-25",
+      "sourceType": "8-K exhibit + press coverage",
+      "sources": [
+        {
+          "label": "Cipher 8-K Exhibit 99.1 (expansion)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819989/000095010325015073/dp237633_ex9901.htm"
+        },
+        {
+          "label": "DCD coverage of Fluidstack lease",
+          "url": "https://www.datacenterdynamics.com/en/news/aws-signs-300mw-hosting-deal-to-lease-capacity-from-cipher-mining/"
+        }
+      ],
+      "criticalItMw": 168,
+      "grossMw": 244,
+      "grossMwBasis": "derived",
+      "termYears": 10,
+      "tcv": 3000000000,
+      "tcvBasis": "stated",
+      "annualRentYr1": null,
+      "escalatorPct": null,
+      "leaseStructure": "NNN",
+      "leaseStructureBasis": "unverified",
+      "takeOrPay": null,
+      "prepayment": null,
+      "renewalOptions": "Two 5-year options; roughly $7B if exercised (initial 168 MW tranche)",
+      "renewalOptionsCount": 2,
+      "renewalOptionYears": 5,
+      "deliveryStart": "2026-Q3",
+      "fullDelivery": "2026-Q3",
+      "rentCommencement": "Delivery by 2026-09-30, rent from Oct 2026",
+      "phases": [
+        {
+          "label": "168 MW",
+          "window": "2026-Q3"
+        }
+      ],
+      "developerCapexTotal": null,
+      "tenantFundedCapex": null,
+      "capexBasis": "unverified",
+      "capexNote": "Cipher stated committed financing in place; capex not disclosed.",
+      "tenantCreditTier": 3,
+      "backstop": {
+        "provider": "Google",
+        "scope": "Backstop of Fluidstack lease obligations; Google also received warrants for about 5.4% pro forma equity",
+        "amount": 1400000000,
+        "amountBasis": "stated"
+      },
+      "effectiveCreditTier": 2,
+      "effectiveCreditBasis": "derived",
+      "notes": [
+        "Textbook effective-credit case: nominal tenant is a private AI cloud, but Google backstops about $1.4B of roughly $3B base-term obligations (about 47%). The engine blends the credit score by coverage (0.47 x Tier 1 + 0.53 x Tier 3) and displays the result as Tier 2.",
+        "Same developer as the AWS deal, which makes CIFR-AWS vs CIFR-Fluidstack a clean rate-versus-credit comparison on one balance sheet.",
+        "A later expansion added roughly 30 MW critical IT for about $830M over 10 years with an additional $333M Google backstop; excluded here to keep the comp on the original announcement."
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "id": "wulf-vs-hut",
+      "label": "WULF vs HUT",
+      "description": "Highest rate vs strongest credit. Both July 2026 prints on a critical IT denominator.",
+      "dealIds": [
+        "wulf-anthropic-justified",
+        "hut-beacon-point-ph2"
+      ]
+    },
+    {
+      "id": "cifr-rate-vs-credit",
+      "label": "CIFR: AWS vs Fluidstack",
+      "description": "One developer, two counterparties. Direct hyperscaler lease vs backstopped AI cloud.",
+      "dealIds": [
+        "cifr-aws-black-pearl",
+        "cifr-fluidstack-barber-lake"
+      ]
+    },
+    {
+      "id": "coreweave-landlords",
+      "label": "GLXY vs CORZ (CoreWeave)",
+      "description": "Same tenant, two capex models. Developer-funded vs tenant-funded build.",
+      "dealIds": [
+        "glxy-coreweave-helios",
+        "corz-coreweave-portfolio"
+      ]
+    },
+    {
+      "id": "three-way",
+      "label": "GLXY vs WULF vs HUT",
+      "description": "Galaxy's home deal against the two largest 2026 prints.",
+      "dealIds": [
+        "glxy-coreweave-helios",
+        "wulf-anthropic-justified",
+        "hut-beacon-point-ph2"
+      ]
+    }
+  ]
+}
