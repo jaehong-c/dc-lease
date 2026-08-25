@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DC Lease Comparator
 
-## Getting Started
+Side-by-side underwriting for publicly disclosed data center leases. Pick two or three deals, adjust the assumptions, and read the economics from the developer's side of the table: rate per kW, yield on cost, NPV, effective counterparty credit, and delivery timing. A rules engine does the scoring. An AI memo interprets the result and says which inputs are stated, derived, or assumed.
 
-First, run the development server:
+Live: https://dc-lease.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Third of three tools that follow a data center asset through its life:
+
+1. [DC Site Screener](https://dc-screener.vercel.app), site selection
+2. **DC Lease Comparator**, lease economics
+3. [DC Risk Register](https://dc-risk.vercel.app), lifecycle risk
+
+## Why this exists
+
+Public data center lease announcements are written for equity investors. They lead with total contract value and megawatts, and leave out what a developer actually underwrites: the denominator (critical IT versus gross), when rent starts, who funds the build, and who really stands behind the tenant. This tool normalizes those announcements onto one set of definitions so they can be compared honestly.
+
+## Definitions
+
+**Critical IT MW** is the billable denominator. Gross MW is shown for context only. Where a release quotes gross capacity (for example CIFR / AWS), the critical IT figure comes from secondary reporting and is flagged unverified.
+
+```
+rate ($/kW/month) = annual rent / (critical IT MW x 1,000) / 12
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Year-1 rent** is derived from base-term contract value and the escalator, so that escalated rent over the term sums to the disclosed TCV. If only average annual revenue is disclosed (GLXY), TCV is first derived as average revenue times term and flagged.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```
+rent yr 1 = TCV / [((1 + e)^T - 1) / e]
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**NOI** equals rent for NNN leases, the standard structure in this market: the tenant pays operating cost and power is passed through at cost. For hosting, gross, or undisclosed structures an opex share is deducted and flagged assumed.
 
-## Learn More
+**Yield on cost** is year-1 NOI over developer net capex. Net capex excludes any tenant-funded build cost. Total developer capex is almost never disclosed, so the engine applies an assumed cost per critical IT MW and flags every dependent output.
 
-To learn more about Next.js, take a look at the following resources:
+```
+yield on cost = NOI yr 1 / (developer capex - tenant-funded capex)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**NPV and IRR** are unlevered and cover the base term only, with no terminal value. Cash flows are monthly. The lease clock starts at first delivery; rent ramps linearly to full delivery; capex is spread evenly over a construction window ending at first delivery. Tenant-funded capex is repaid through rent credits capped at a share of monthly rent.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Effective credit
 
-## Deploy on Vercel
+The nominal tenant and the credit that actually backs the lease are often different. A private AI cloud with a hyperscaler backstop is not a Tier 3 counterparty for the covered share of the obligation. The engine records the tenant tier, any disclosed backstop and its amount, and blends the credit score by coverage.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Tier | Definition |
+|---|---|
+| 1 | Investment-grade hyperscaler, IG parent guarantee, or IG credit support covering the lease |
+| 2 | Well-funded private AI lab or AI cloud without disclosed IG support |
+| 3 | Speculative or thinly capitalized counterparty |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Each tier carries an illustrative expected yield-on-cost band (Tier 1: 10.0 to 12.5%, Tier 2: 12.5 to 15.0%, Tier 3: 15.0 to 20.0%). The band is a heuristic, not a market survey. It exists to ask one question: is the yield paying for the credit risk?
+
+## Scorecard
+
+Five axes, each scored 1 to 5 from the developer's perspective, weighted into a composite.
+
+| Weight | Axis | Basis |
+|---|---|---|
+| 25% | Pricing | Year-1 rate per kW |
+| 25% | Credit | Effective tier, blended by backstop coverage |
+| 15% | Term and structure | Term length, stated escalator, take-or-pay, renewal options |
+| 20% | Capex efficiency | Yield on developer net cost |
+| 15% | Delivery | Months to full delivery, capped at 3 where full delivery is undisclosed |
+
+Verdicts are relative to the deals on screen: the top composite is **Stronger**, anything within 0.3 is **Comparable**, the rest **Weaker**. A single deal is not scored against itself.
+
+## Assumptions and what the AI does
+
+Defaults: discount rate 10% (a target unlevered return, not WACC), assumed capex $11.0M per critical IT MW, default escalator 2.5%, opex 22% of revenue for non-NNN structures, construction window 18 months, rent credit cap 50%. Every assumption is adjustable and every output that depends on one carries a flag.
+
+The memo is generated by Claude from the engine outputs and the assumptions shown on screen. It does not calculate or score anything. It is asked to interpret, to say where headline figures mislead, and to list what to confirm in diligence.
+
+## Limitations
+
+- The comp universe is limited to leases disclosed by public companies. That skews toward developers that converted from bitcoin mining, because hyperscaler-direct leases with private developers are rarely announced.
+- Capex is undisclosed in every deal in the library. Yield on cost, NPV, IRR, and payback all rest on the capex assumption. The tool is most useful for comparing deals under one consistent assumption, not for estimating any developer's actual return.
+- NPV excludes terminal value and renewal options, which understates long-dated leases. Ramp and construction timing are modeled as linear.
+
+## Deal library
+
+Last verified 2026-08-24. Primary disclosures are linked in `data/deals.json` and on the About page.
+
+| Deal | Critical IT MW | Term | Base-term value | Effective credit |
+|---|---|---|---|---|
+| WULF / Anthropic, Justified Data Campus, KY | 401 | 20 yrs | $19.0B | Tier 1 (IG support, undisclosed) |
+| HUT / undisclosed IG tenant, Beacon Point Phase 2, TX | 352 | 15 yrs | $9.8B, 3% escalator | Tier 1 |
+| GLXY / CoreWeave, Helios, TX | 526 | 15 yrs | >$1B avg annual revenue | Tier 2 |
+| CIFR / AWS, Black Pearl, TX | 216 (300 gross) | 15 yrs | $5.5B | Tier 1 (Amazon guarantee) |
+| CIFR / Fluidstack, Barber Lake, TX | 168 | 10 yrs | $3.0B, Google backstop $1.4B | Tier 2 (47% covered) |
+| CORZ / CoreWeave, six-site portfolio | 590 | 12 yrs | $10.2B, tenant-funded capex | Tier 2 |
+
+Every quantitative field in `deals.json` carries a basis flag: `stated`, `derived`, `estimated`, or `unverified`. `null` means undisclosed and is never treated as zero.
+
+## Stack
+
+- Next.js 16, App Router, JavaScript, Tailwind v4 (design tokens in `globals.css`, no component library)
+- Static JSON data layer (`data/deals.json`)
+- Deterministic engine in `lib/economics.js`, shared by the UI, CSV export, and memo prompt
+- Anthropic API called from `app/api/memo/route.js` (server only)
+- Deployed on Vercel from GitHub
+
+## Run locally
+
+```
+npm install
+echo ANTHROPIC_API_KEY=your_key > .env.local
+npm run dev
+```
+
+## Roadmap
+
+- v0.2: custom deal entry alongside library deals; sensitivity table across capex and discount rate
+- v0.3: saved comparisons, PDF export, renewal-option scenarios
+
+## Author
+
+Jae Chung. © 2026. All rights reserved.

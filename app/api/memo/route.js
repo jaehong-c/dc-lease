@@ -60,7 +60,7 @@ Write the memo in exactly these six sections, each starting with a line that beg
 5. What would change the view: the two or three assumptions or undisclosed inputs that most affect the ranking, with direction (which deal benefits if the assumption moves).
 6. Information to confirm: a short list drawn from the data gaps, phrased as diligence asks.
 
-Style: about 450 to 550 words. Plain prose, short paragraphs, no bullet lists except in section 6. Bold the two or three most decision-relevant phrases using **double asterisks**. No preamble, no sign-off, no headers other than the six "## " lines.`;
+Style: about 400 to 500 words. Plain prose, short paragraphs, no bullet lists except in section 6. Bold the two or three most decision-relevant phrases using **double asterisks**. Do not use em dashes or en dashes anywhere; use commas, periods, or parentheses instead. No preamble, no sign-off, no headers other than the six "## " lines.`;
 }
 
 export async function POST(req) {
@@ -93,7 +93,7 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 1400,
+        max_tokens: 2200,
         messages: [{ role: "user", content: prompt }],
       }),
     });
