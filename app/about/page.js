@@ -35,10 +35,10 @@ export default function About() {
         <div className="eyebrow">About</div>
         <h1 style={{ fontSize: 26, fontWeight: 600, letterSpacing: "-0.02em", marginTop: 6 }}>DC Lease Comparator</h1>
         <p style={{ fontSize: 14.5, color: "var(--ink-2)", marginTop: 8, lineHeight: 1.6 }}>
-          A side-by-side underwriting tool for publicly disclosed data center leases. Pick two or three deals, adjust the
-          assumptions, and read the economics from the developer's side of the table: rate per kW, yield on cost, NPV,
-          effective counterparty credit, and delivery timing. A rules engine does the scoring. An AI memo interprets the
-          result and says which inputs are stated, derived, or assumed.
+          A side-by-side underwriting tool for publicly disclosed data center leases. Pick two or three deals, or enter
+          your own, adjust the assumptions, and read the economics from the developer's side of the table: rate per kW,
+          yield on cost, NPV, effective counterparty credit, and delivery timing. A rules engine does the scoring. An AI
+          memo interprets the result and says which inputs are stated, derived, or assumed.
         </p>
       </div>
 
@@ -71,9 +71,11 @@ export default function About() {
         </p>
         <Formula>rate ($/kW/month) = annual rent ÷ (critical IT MW × 1,000) ÷ 12</Formula>
         <p>
-          <strong>Year-1 rent</strong> is derived from base-term contract value and the escalator, so that escalated rent
-          over the term sums to the disclosed TCV. If only average annual revenue is disclosed (GLXY), TCV is first derived
-          as average revenue times term and flagged.
+          <strong>Average rate</strong> is base-term contract value divided by term, per kW per month. It is the figure
+          announcements usually imply. <strong>Year-1 rate</strong> is derived from the same TCV and the escalator, so that
+          escalated rent over the term sums to the disclosed TCV. Both are shown at equal weight because the first is what
+          gets quoted and the second is what the first year's cash flow actually looks like. If only average annual revenue
+          is disclosed (GLXY), TCV is first derived as average revenue times term and flagged.
         </p>
         <Formula>rent yr 1 = TCV ÷ [((1 + e)^T − 1) ÷ e]</Formula>
         <p>
@@ -127,6 +129,15 @@ export default function About() {
         <p>
           Verdicts are relative to the deals on screen: the top composite is <strong>Stronger</strong>, anything within 0.3
           is <strong>Comparable</strong>, the rest <strong>Weaker</strong>. A single deal is not scored against itself.
+        </p>
+      </Section>
+
+      <Section title="Custom deals">
+        <p>
+          Any slot can hold a deal you enter yourself, or a copy of a library deal with the numbers changed. Every input
+          carries a basis of stated, assumed, or unknown. Unknown inputs fall back to the global assumptions and are listed
+          under Data gaps, so a custom deal is scored on exactly the same footing as a disclosed one. Copying a library deal
+          and changing one input (for example the escalator) is the quickest way to run a sensitivity.
         </p>
       </Section>
 
@@ -186,8 +197,8 @@ export default function About() {
       <Section title="Stack and version">
         <p>
           Next.js (App Router, JavaScript), static JSON data layer, deterministic engine in <span className="mono">lib/economics.js</span>,
-          Anthropic API called from a server route for the memo, deployed on Vercel. v0.1.0. Planned: custom deal entry,
-          sensitivity table, saved comparisons.
+          Anthropic API called from a server route for the memo, deployed on Vercel. v0.2.0. Planned: sensitivity table,
+          saved comparisons, PDF export.
         </p>
         <p>
           <Link href="/" className="btn btn-primary btn-sm">Back to comparator</Link>

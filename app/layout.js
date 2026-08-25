@@ -53,7 +53,7 @@ function Footer() {
     <footer style={{ borderTop: "1px solid var(--border)", marginTop: 48 }}>
       <div style={{ ...wrap, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, fontSize: 12, color: "var(--ink-3)" }}>
         <span>{"\u00A9"} 2026 Jae Chung. All rights reserved.</span>
-        <span className="mono">v0.0.1 / comps limited to publicly disclosed leases</span>
+        <span className="mono">v0.2.0 / comps limited to publicly disclosed leases</span>
       </div>
     </footer>
   );

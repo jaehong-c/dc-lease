@@ -1,6 +1,6 @@
 # DC Lease Comparator
 
-Side-by-side underwriting for publicly disclosed data center leases. Pick two or three deals, adjust the assumptions, and read the economics from the developer's side of the table: rate per kW, yield on cost, NPV, effective counterparty credit, and delivery timing. A rules engine does the scoring. An AI memo interprets the result and says which inputs are stated, derived, or assumed.
+Side-by-side underwriting for publicly disclosed data center leases. Pick two or three deals, or enter your own, adjust the assumptions, and read the economics from the developer's side of the table: rate per kW, yield on cost, NPV, effective counterparty credit, and delivery timing. A rules engine does the scoring. An AI memo interprets the result and says which inputs are stated, derived, or assumed.
 
 Live: https://dc-lease.vercel.app
 
@@ -22,7 +22,7 @@ Public data center lease announcements are written for equity investors. They le
 rate ($/kW/month) = annual rent / (critical IT MW x 1,000) / 12
 ```
 
-**Year-1 rent** is derived from base-term contract value and the escalator, so that escalated rent over the term sums to the disclosed TCV. If only average annual revenue is disclosed (GLXY), TCV is first derived as average revenue times term and flagged.
+**Average rate** is base-term contract value divided by term, per kW per month; it is the figure announcements usually imply. **Year-1 rate** is derived from the same TCV and the escalator, so that escalated rent over the term sums to the disclosed TCV. Both are shown at equal weight because the first is what gets quoted and the second is what the first year's cash flow actually looks like. If only average annual revenue is disclosed (GLXY), TCV is first derived as average revenue times term and flagged.
 
 ```
 rent yr 1 = TCV / [((1 + e)^T - 1) / e]
@@ -63,6 +63,10 @@ Five axes, each scored 1 to 5 from the developer's perspective, weighted into a 
 | 15% | Delivery | Months to full delivery, capped at 3 where full delivery is undisclosed |
 
 Verdicts are relative to the deals on screen: the top composite is **Stronger**, anything within 0.3 is **Comparable**, the rest **Weaker**. A single deal is not scored against itself.
+
+## Custom deals
+
+Any slot can hold a deal you enter yourself, or a copy of a library deal with the numbers changed. Every input carries a basis of stated, assumed, or unknown. Unknown inputs fall back to the global assumptions and are listed under Data gaps, so a custom deal is scored on the same footing as a disclosed one. Copying a library deal and changing one input (for example the escalator) is the quickest way to run a sensitivity.
 
 ## Assumptions and what the AI does
 
@@ -107,10 +111,14 @@ echo ANTHROPIC_API_KEY=your_key > .env.local
 npm run dev
 ```
 
+## Version
+
+v0.2.0. Custom deal entry, equal-weight average and year-1 rate, memo writing indicator.
+
 ## Roadmap
 
-- v0.2: custom deal entry alongside library deals; sensitivity table across capex and discount rate
-- v0.3: saved comparisons, PDF export, renewal-option scenarios
+- v0.3: sensitivity table across capex and discount rate; saved comparisons; PDF export
+- v0.4: renewal-option scenarios; terminal value toggle
 
 ## Author
 
