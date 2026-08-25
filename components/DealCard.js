@@ -29,11 +29,11 @@ function deliveryLabel(months, quarter) {
   return quarter;
 }
 
-function optionLabel(d) {
+export function optionLabel(d) {
   return `${d.developerTicker || "Custom"} / ${d.tenantShort || d.tenant || "untitled"} · ${d.criticalItMw ?? "?"} MW`;
 }
 
-function DealSelect({ value, library, customs, onChange, placeholder }) {
+export function DealSelect({ value, library, customs, onChange, placeholder }) {
   return (
     <select className="field-select" value={value} onChange={(e) => onChange(e.target.value)}>
       {placeholder && (
@@ -102,7 +102,7 @@ export default function DealCard({ index, deal, result, verdict, library, custom
           <span className="chip chip-unverified">Incomplete</span>
         </div>
         <div style={{ fontSize: 16, fontWeight: 600 }}>{optionLabel(deal)}</div>
-        <p className="muted" style={{ fontSize: 13 }}>{result?.reason || "Could not evaluate this deal."}</p>
+        <p className="muted" style={{ fontSize: 13 }}>Needs critical IT MW, term, and TCV (or year-1 rent) to score.</p>
         <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
           {deal.custom && <button className="btn btn-primary btn-sm" onClick={onEdit}>Edit</button>}
           <button className="btn btn-ghost btn-sm" onClick={onClear}>Clear</button>

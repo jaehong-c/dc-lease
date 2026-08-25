@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { compareDeals, DEFAULT_ASSUMPTIONS } from "../lib/economics";
 import { buildCsv, downloadCsv } from "../lib/exportCsv";
 import DealCard, { NEW_CUSTOM } from "./DealCard";
-import CustomDealForm from "./CustomDealForm";
+import CustomDealCard from "./CustomDealCard";
 import SideBySide from "./SideBySide";
 import Assumptions from "./Assumptions";
 import DataGaps from "./DataGaps";
@@ -26,6 +26,7 @@ function blankCustom(id) {
     criticalItMw: null,
     criticalItMwBasis: "unknown",
     grossMw: null,
+    grossMwBasis: "unknown",
     termYears: null,
     termYearsBasis: "unknown",
     tcv: null,
@@ -47,6 +48,8 @@ function blankCustom(id) {
     developerCapexTotalBasis: "unknown",
     tenantFundedCapex: null,
     tenantFundedCapexBasis: "unknown",
+    backstopAmount: null,
+    backstopAmountBasis: "unknown",
     tenantCreditTier: 2,
     backstop: null,
     effectiveCreditTier: null,
@@ -62,6 +65,8 @@ function cloneAsCustom(deal, id) {
     custom: true,
     tenantShort: copy.tenantShort || copy.tenant,
     developerTicker: `${copy.developerTicker}*`,
+    backstopAmount: copy.backstop?.amount ?? null,
+    backstopAmountBasis: copy.backstop?.amount != null ? "stated" : "unknown",
     notes: [`Custom copy of ${copy.developerTicker} / ${copy.tenant}. Edited figures carry the basis chosen on entry.`, ...(copy.notes || [])],
     effectiveCreditTier: copy.effectiveCreditTier ?? null,
   };
@@ -76,7 +81,7 @@ export default function Comparator({ library }) {
   const [assumptions, setAssumptions] = useState(DEFAULT_ASSUMPTIONS);
   const [customs, setCustoms] = useState([]);
   const [nextId, setNextId] = useState(1);
-  const [editing, setEditing] = useState(null); // custom deal id being edited
+  const [editing, setEditing] = useState(null); // custom deal id in edit mode
 
   const allDeals = [...deals, ...customs];
   const selected = slots.map((id) => (id ? allDeals.find((d) => d.id === id) || null : null));
@@ -122,10 +127,10 @@ export default function Comparator({ library }) {
     setCustoms((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
   }
 
-  function removeCustom(id) {
-    setCustoms((prev) => prev.filter((d) => d.id !== id));
-    setSlots((prev) => prev.map((s) => (s === id ? null : s)));
+  function clearSlot(i, deal) {
     setEditing(null);
+    if (deal?.custom) setCustoms((prev) => prev.filter((d) => d.id !== deal.id));
+    placeInSlot(i, null);
   }
 
   function resultFor(id) {
@@ -141,7 +146,6 @@ export default function Comparator({ library }) {
 
   const results = compare ? compare.results : [];
   const verdicts = compare ? compare.verdicts : {};
-  const editingDeal = editing ? customs.find((d) => d.id === editing) : null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -181,36 +185,39 @@ export default function Comparator({ library }) {
       )}
 
       {/* Deal slots */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 20 }}>
-        {selected.map((deal, i) => (
-          <DealCard
-            key={i}
-            index={i}
-            deal={deal}
-            result={deal ? resultFor(deal.id) : null}
-            verdict={deal && compare ? verdicts[deal.id] : null}
-            library={deals}
-            customs={customs}
-            onChange={(id) => setSlot(i, id)}
-            onClear={() => {
-              setEditing(null);
-              placeInSlot(i, null);
-            }}
-            onCustomize={() => newCustom(i, deal)}
-            onEdit={() => setEditing(deal.id)}
-          />
-        ))}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 20, alignItems: "start" }}>
+        {selected.map((deal, i) =>
+          deal && deal.custom && editing === deal.id ? (
+            <CustomDealCard
+              key={i}
+              index={i}
+              deal={deal}
+              result={resultFor(deal.id)}
+              verdict={compare ? verdicts[deal.id] : null}
+              library={deals}
+              customs={customs}
+              onChange={updateCustom}
+              onSelect={(id) => setSlot(i, id)}
+              onClear={() => clearSlot(i, deal)}
+              onDone={() => setEditing(null)}
+            />
+          ) : (
+            <DealCard
+              key={i}
+              index={i}
+              deal={deal}
+              result={deal ? resultFor(deal.id) : null}
+              verdict={deal && compare ? verdicts[deal.id] : null}
+              library={deals}
+              customs={customs}
+              onChange={(id) => setSlot(i, id)}
+              onClear={() => clearSlot(i, deal)}
+              onCustomize={() => newCustom(i, deal)}
+              onEdit={() => setEditing(deal.id)}
+            />
+          )
+        )}
       </div>
-
-      {/* Custom deal editor */}
-      {editingDeal && (
-        <CustomDealForm
-          deal={editingDeal}
-          onChange={updateCustom}
-          onDone={() => setEditing(null)}
-          onRemove={() => removeCustom(editingDeal.id)}
-        />
-      )}
 
       {/* Comparison + assumptions */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, alignItems: "start" }}>
